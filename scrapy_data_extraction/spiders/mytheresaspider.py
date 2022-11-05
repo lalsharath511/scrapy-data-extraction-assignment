@@ -23,12 +23,14 @@ class MytheresaSpider(scrapy.Spider):
         sizes_details = product.xpath("//div[@class='product-shop'] //ul[@class='sizes'] //span/text()").getall()
         sizes = []
         for size in sizes_details:
-            size=size.replace("/"," ").strip(" ").split("  ")
+            size = size.replace("/", " ").strip(" ").split("  ")
             for i in size:
                 sizes.append(i)
-        listing_price = product.xpath("//div[@class='product-shop'] //span[@class='regular-price'] //span[@class='price']/text()").get()
+        listing_price = product.xpath(
+            "//div[@class='product-shop'] //span[@class='regular-price'] //span[@class='price']/text()").get()
         if listing_price == None:
-            listing_price = product.xpath("//div[@class='product-shop'] //p[@class='old-price'] //span[@class='price']/text()").get()
+            listing_price = product.xpath(
+                "//div[@class='product-shop'] //p[@class='old-price'] //span[@class='price']/text()").get()
 
         yield {
             "breadcrumbs": product.xpath("//div[@class='breadcrumbs'] //span/text()").getall()[0:-1],
@@ -36,10 +38,13 @@ class MytheresaSpider(scrapy.Spider):
             "brand": product.xpath("//a[@class='text-000000']/text()").get(),
             "product_name": product.xpath("//div[@class='product-name'] //span/text()").get(),
             "listing_price": listing_price,
-            "offer_price": product.xpath("//div[@class='product-shop'] //p[@class='special-price'] //span[@class='price']/text()").get(),
-            "discount":  product.xpath("//div[@class='product-shop'] //span[@class='price-reduction-notice']/text()").get(),
+            "offer_price": product.xpath(
+                "//div[@class='product-shop'] //p[@class='special-price'] //span[@class='price']/text()").get(),
+            "discount": product.xpath(
+                "//div[@class='product-shop'] //span[@class='price-reduction-notice']/text()").get(),
             "product_id": product.xpath("//span[@class='h1']/text()").get()[-9:],
             "sizes": sizes,
-            "description": (str(product.css('p.pa1-rmm.product-description::text').get())) + ' '.join(product.xpath("//li[@class='pa1-rmm']/text()").getall()),
+            "description": (str(product.css('p.pa1-rmm.product-description::text').get())) + ' '.join(
+                product.xpath("//li[@class='pa1-rmm']/text()").getall()),
             "other_images": product.css('img.gallery-image').xpath('@data-src').getall()
         }
